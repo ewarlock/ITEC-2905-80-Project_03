@@ -86,7 +86,6 @@ class TestQuiz(TestCase):
             questions = quizdatabase.get_questions_by_category(category)
 
 
-
     def test_get_question_by_id_valid_id(self):
         sample_question_one = Question(question='Test Question One', answercorrect='Yes', answerincorrecta='No', answerincorrectb='No', answerincorrectc='No', difficulty=1, points=1, category='Category')
         sample_question_two = Question(question='Test Question Two', answercorrect='Yes', answerincorrecta='No', answerincorrectb='No', answerincorrectc='No', difficulty=1, points=1, category='Category')
