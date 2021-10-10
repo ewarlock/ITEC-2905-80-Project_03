@@ -13,7 +13,7 @@ def instructions():
     return instructions
 
 
-def display_formatted_list(unformatted_list):
+def format_list(unformatted_list):
     """Take a list and display it as a numbered list using item index + 1."""
     list_string = ''
     for item in unformatted_list:
