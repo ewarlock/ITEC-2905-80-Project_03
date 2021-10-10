@@ -14,10 +14,3 @@ def is_in_range(user_input, list):
         return True
     else: 
         return False
-
-
-def is_not_empty_list(list):
-    if (len(list) == 0):
-        return False
-    else:
-        return True
