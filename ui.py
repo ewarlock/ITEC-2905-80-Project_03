@@ -78,7 +78,7 @@ def display_results(category, score, points_available, percentage, quiz_time):
     category_string = f'The quiz category was {category}.\n'
     quiz_time_string = f'The total time to take the quiz was {quiz_time:.2f} minutes.\n'
     quiz_score_string = f'{score} points were earned, out of a total of {points_available}.\n'
-    quiz_score_percentage_string = f'The user got {percentage:.2f}% of the questions correct.'
+    quiz_score_percentage_string = f'The user got a score of {percentage:.2f}%'
 
     results_string = f'\n{intro_string}{category_string}{quiz_time_string}{quiz_score_string}{quiz_score_percentage_string}\n'
 

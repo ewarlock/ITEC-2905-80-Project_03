@@ -11,6 +11,7 @@ db_config.database_path = test_db_path
 import quizdatabase
 from quizdatabase import Question
 from quizdatabase import Result
+from quizdatabase import QuizDBError
 
 class TestQuiz(TestCase):
 
@@ -57,10 +58,9 @@ class TestQuiz(TestCase):
         self.assertCountEqual(categories, expected)
 
 
-    def test_get_all_questions_no_questions_in_db_returns_empty_list(self):
-        empty_list = []
-        questions = quizdatabase.get_all_questions()
-        self.assertEqual(questions, empty_list)
+    def test_get_all_questions_no_questions_in_db_raises_QuizDBError(self):
+        with self.assertRaises(QuizDBError):
+            questions = quizdatabase.get_all_questions()
 
     
     def test_get_questions_by_category_valid_category(self):
@@ -79,13 +79,12 @@ class TestQuiz(TestCase):
         self.assertNotEqual(questions, empty_list)
 
 
-    def test_get_questions_by_category_invalid_category_returns_empty_list(self):
+    def test_get_questions_by_category_invalid_category_raises_QuizDBError(self):
         category = 'Category One'
-        empty_list = []
 
-        questions = quizdatabase.get_questions_by_category(category)
+        with self.assertRaises(QuizDBError):
+            questions = quizdatabase.get_questions_by_category(category)
 
-        self.assertEqual(questions, empty_list)
 
 
     def test_get_question_by_id_valid_id(self):
@@ -99,16 +98,14 @@ class TestQuiz(TestCase):
         self.assertIsNotNone(questions)
 
 
-    def test_get_question_by_id_not_in_database_returns_none(self):
-        questions = quizdatabase.get_question_by_id(2)
+    def test_get_question_by_id_not_in_database_raises_QuizDBError(self):
+        with self.assertRaises(QuizDBError):
+            questions = quizdatabase.get_question_by_id(2)
 
-        self.assertIsNone(questions)
 
-
-    def test_get_question_by_weird_character_id_not_in_database_returns_none(self):
-        questions = quizdatabase.get_question_by_id('👻👻👻👻👻')
-
-        self.assertIsNone(questions)
+    def test_get_question_by_weird_character_id_not_in_database_raises_QuizDBError(self):
+        with self.assertRaises(QuizDBError):
+            questions = quizdatabase.get_question_by_id('👻👻👻👻👻')
 
 
     def test_convert_boolean_to_number_for_is_correct_when_False(self):
@@ -129,11 +126,27 @@ class TestQuiz(TestCase):
         self.assertEqual(is_correct_number, expected)
 
 
-    def test_convert_boolean_to_number_for_is_correct_when_weird(self):
+    def test_convert_boolean_to_number_for_is_correct_when_invalid_raises_QuizDBError(self):
         is_correct = '👻👻👻👻👻/\/lskdjf\'    '
+
+        with self.assertRaises(QuizDBError):
+            is_correct_number = quizdatabase.convert_is_correct_to_number(is_correct)
+
+
+    def test_convert_boolean_to_number_for_is_correct_accepts_0_as_False(self):
+        is_correct = 0
 
         is_correct_number = quizdatabase.convert_is_correct_to_number(is_correct)
         expected = 0
+
+        self.assertEqual(is_correct_number, expected)        
+
+
+    def test_convert_boolean_to_number_for_is_correct_accepts_1_as_True(self):
+        is_correct = 1
+
+        is_correct_number = quizdatabase.convert_is_correct_to_number(is_correct)
+        expected = 1
 
         self.assertEqual(is_correct_number, expected)
 
@@ -152,6 +165,42 @@ class TestQuiz(TestCase):
         result = Result.get_or_none()
         self.assertIsNotNone(result)
         
+
+    def test_create_question_result_with_weird_result(self):
+        timestamp_start = 1234
+        timestamp_end = 5678
+        user_answer = '👻👻👻👻👻/\/lskdjf\'    '
+        points = 3
+        is_correct = True
+        session_id = 12345
+        question_id = 1
+
+        quizdatabase.create_question_result(timestamp_start, timestamp_end, user_answer, points, is_correct, session_id, question_id)
+
+        result = Result.get_or_none()
+        self.assertIsNotNone(result)
+
+
+    def test_get_last_session_id(self):
+        timestamp_start = 1
+        user_answer = 'This is an answer'
+        points = 3
+        is_correct = 1
+        question_id = 1
+
+        quizdatabase.create_question_result(timestamp_start, 10, user_answer, points, is_correct, 'Session One', question_id)
+
+        expected = 'Session One'
+
+        last_session_id = quizdatabase.get_last_session_id()
+
+        self.assertEqual(last_session_id, expected)
+
+
+    def test_get_last_session_id_when_no_results_in_db_raises_QuizDBError(self):
+        with self.assertRaises(QuizDBError):
+            last_session_id = quizdatabase.get_last_session_id()
+
 
     def test_get_last_session_results(self):
         timestamp_start = 1
@@ -191,7 +240,7 @@ class TestQuiz(TestCase):
         self.assertNotEqual(results, empty_list)
 
 
-    def test_get_results_by_invalid_session(self):
+    def test_get_results_by_invalid_session_raises_QuizDBError(self):
         timestamp_start = 1234
         timestamp_end = 5678
         user_answer = 'This is an answer'
@@ -203,11 +252,13 @@ class TestQuiz(TestCase):
         quizdatabase.create_question_result(timestamp_start, timestamp_end, user_answer, points, is_correct, 1234, question_id)
         quizdatabase.create_question_result(timestamp_start, timestamp_end, user_answer, points, is_correct, 5678, question_id)
 
-        empty_list = []
+        with self.assertRaises(QuizDBError):
+            results = quizdatabase.get_results_by_session('This is an invalid session')
 
-        results = quizdatabase.get_results_by_session('This is an invalid session')
-        self.assertEqual(results, empty_list)
 
+    def test_get_results_when_no_results_in_db_raises_QuizDBError(self):
+        with self.assertRaises(QuizDBError):
+            results = quizdatabase.get_results_by_session(12345)
 
 
 if __name__ == '__main__':
