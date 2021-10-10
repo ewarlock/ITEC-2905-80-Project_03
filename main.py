@@ -103,8 +103,6 @@ def prepare_quiz_questions(questions, number_of_questions):
 
 
 def get_results():
-    # TODO: error handling for no quiz results in db
-
     # get the most recent session results
     last_session_id = quizdatabase.get_last_session_id()
     last_session_results = quizdatabase.get_results_by_session(last_session_id)
