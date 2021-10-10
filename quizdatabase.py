@@ -103,6 +103,7 @@ def convert_is_correct_to_number(is_correct):
     
     return is_correct_number
 
+
 def create_question_result(timestamp_start, timestamp_end, user_answer, points, is_correct, session_id, question_id):
     """Create a new question result, then save that result to the Result table."""
     is_correct_number = convert_is_correct_to_number(is_correct)

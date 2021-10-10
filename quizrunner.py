@@ -28,14 +28,14 @@ def create_answer_list(question):
 
 def grade_question(correct_answer, user_answer):
     """Returns whether or not question correct.
-    Returns 1 for correct.
-    Returns 0 for incorrect."""
+    Returns True for correct.
+    Returns False for incorrect."""
     if (correct_answer == user_answer):
         print(f'You selected {user_answer}.\nThat\'s Correct!\n')
-        return 1
+        return True
     else:
         print(f'You selected {user_answer}.\nThat is incorrect, sorry!\nThe correct answer is {correct_answer}.\n')
-        return 0
+        return False
 
 
 def calculate_total_score(results):
