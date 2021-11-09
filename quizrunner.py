@@ -12,7 +12,7 @@ def shuffle_list(shuffle_list):
 
 def trim_list(starting_list, max):
     """Takes a list and trims it based on a maximum value"""
-    new_list = starting_list[:max]
+    new_list = starting_list[:max]  # Avoid the name max since it's also a built-in Python function so possible source of confusion
     return new_list
 
 
@@ -23,6 +23,13 @@ def create_answer_list(question):
     answer_list.append(question.answerincorrecta)
     answer_list.append(question.answerincorrectb)
     answer_list.append(question.answerincorrectc)
+
+    # this may be being picky but a more concise approach 
+    answer_list = [question.answercorrect, question.answerincorrecta, question.answerincorrectb, question.answerincorrectc]
+
+    # or, moving the logic to the Model - see notes and new method in the Question model 
+    answer_list = question.all_answers()
+
     return answer_list
 
 
@@ -40,6 +47,9 @@ def grade_question(correct_answer, user_answer):
 
 def calculate_total_score(results):
     """Returns total score for a session based on results from that session and whether or not result was correct."""
+
+    # Could the database do this with an aggregate query? 
+
     total_score = 0
     for result in results:
         if (result.iscorrect == 1):
@@ -50,6 +60,9 @@ def calculate_total_score(results):
 def calculate_total_available_points(results):
     """Returns total available points for a session based on results from that session.
     This is the maximum possible score for a user to get on the quiz given during that session."""
+
+    # Could the database do this with an aggregate query? 
+
     available_points = 0
     for result in results:
         available_points += result.points
@@ -83,9 +96,14 @@ def calculate_total_quiz_time(results):
     return total_time
 
 
-def convert_to_minutes(timestamp):
+def convert_to_minutes(seconds):
     """Puts seconds into minutes."""
-    minutes = timestamp / 60
+
+    # A timestamp is usually understood as the seconds since Jan 1st 1970
+    # reading this code, it appears that the timestamp parameter represents a number of seconds
+    # consider renaming the parameter?   Review other places you've used the name timestamp. 
+
+    minutes = seconds / 60
     return minutes
 
 

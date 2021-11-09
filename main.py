@@ -29,7 +29,7 @@ def main():
 
             # get category selection, questions in that category, and number of questions desired from user input
             category_selection = ui.select_category(category_list, category_string)
-            category_questions = quizdatabase.get_questions_by_category(category_selection)
+            category_questions = quizdatabase.get_questions_by_category(category_selection)  # could you request only the number of questions needed?
             number_of_questions = ui.select_number_of_questions(category_selection, category_questions)
 
             # configure the quiz based on user's selected category & number of questions
@@ -72,6 +72,7 @@ def run_quiz(questions, session_id):
         # in an unshuffled answer list, position 0 always contains the correct answer
         # due to the design of the questions table in the quiz database
         correct_answer = answer_list[0] # take correct answer out of unshuffled answer list for grading
+        correct_answer = question.answercorrect  # the question object directly knows the correct answer too
 
         # shuffle quiz answers, then display them for user input
         answer_list_shuffled = quizrunner.shuffle_list(answer_list)
@@ -96,6 +97,7 @@ def prepare_quiz_questions(questions, number_of_questions):
     """Shuffles a list of questions, then trims the list down to the user's requested number of questions."""
     # prepare the list of questions by randomizing the list
     # then trimming the list down to the user's requested number of questions
+    # see notes on requesting only the number of questions needed using a limit query in the DB
     questions_randomized = quizrunner.shuffle_list(questions)
     questions_trimmed = quizrunner.trim_list(questions_randomized, number_of_questions)
 

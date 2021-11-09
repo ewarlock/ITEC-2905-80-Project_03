@@ -5,6 +5,9 @@ import quizrunner
 
 from quizdatabase import Question
 
+# Unit tests! Unit tests! Unit tests!!!!
+
+# These are all useful tests that check things that are boring for humans to test.  Exactly what we want tests to do. 
 
 class TestQuiz(TestCase):
 
