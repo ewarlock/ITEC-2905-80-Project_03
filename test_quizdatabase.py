@@ -13,6 +13,9 @@ from quizdatabase import Question
 from quizdatabase import Result
 from quizdatabase import QuizDBError
 
+# Great to see DB test and tests that look at no data, possible error conditions. 
+
+
 class TestQuiz(TestCase):
 
     test_db_url = 'test_quiz.db'
@@ -39,6 +42,9 @@ class TestQuiz(TestCase):
         empty_list = []
 
         questions = quizdatabase.get_all_questions()
+
+        # It would be more useful to assert that the existing two questions are returned
+        # Would this assertion succeed if get_all_questions returned anything that wasn't an empty list? 
 
         self.assertNotEqual(questions, empty_list)
 
@@ -76,6 +82,7 @@ class TestQuiz(TestCase):
 
         questions = quizdatabase.get_questions_by_category(category)
 
+        # be more specific 
         self.assertNotEqual(questions, empty_list)
 
 
@@ -92,9 +99,17 @@ class TestQuiz(TestCase):
         sample_question_one.save()
         sample_question_two.save()
 
-        questions = quizdatabase.get_question_by_id(2)
+        # the IDs are probably 1, 2, but they are not guaranteed to be these numbers - get the ID value generated for question two
+        questions = quizdatabase.get_question_by_id(sample_question_two.id) 
+
+        # Again, be specific with your assertions. If you check that something is not None, there could be many possible 
+        # incorrect things that are also not None.  If I change your get_question_by_id method to return 'Pizza!' or anything 
+        # that isn't None, then this test still passes...
 
         self.assertIsNotNone(questions)
+
+        # ...unless we write a specific test. Peewee objects that represent the same data are considered equal.
+        self.assertEqual(sample_question_two, questions)  # better assertion - more specific 
 
 
     def test_get_question_by_id_not_in_database_raises_QuizDBError(self):
@@ -162,6 +177,8 @@ class TestQuiz(TestCase):
         quizdatabase.create_question_result(timestamp_start, timestamp_end, user_answer, points, is_correct, session_id, question_id)
 
         result = Result.get_or_none()
+
+        # Better to check that result IS the thing you expect
         self.assertIsNotNone(result)
         
 
@@ -177,6 +194,8 @@ class TestQuiz(TestCase):
         quizdatabase.create_question_result(timestamp_start, timestamp_end, user_answer, points, is_correct, session_id, question_id)
 
         result = Result.get_or_none()
+
+        # Better to check that result IS the thing you expect
         self.assertIsNotNone(result)
 
 

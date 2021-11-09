@@ -21,7 +21,7 @@ def format_list(unformatted_list):
         index += 1
         list_string += f'{index}. {item}\n'
 
-    return(list_string)
+    return list_string   # parenthesis not needed 
 
 
 def select_category(category_list, category_string):
@@ -43,6 +43,9 @@ def select_number_of_questions(category, category_questions):
     while True:
         print(f'{len(category_questions)} questions available in {category}.')
         number_of_questions_string = input(f'Type in the number of questions you want to be quizzed on: ')
+
+        # if validation had a function called get_number_within_range(min_val, max_max) that returned an integer 
+        # between min and max, you could move the validation to this new function and simplify this code
         if validation.is_number(number_of_questions_string) == False:
             print('\nPlease enter a numeric value.\n')
         elif validation.is_in_range(number_of_questions_string, category_questions) == False:
